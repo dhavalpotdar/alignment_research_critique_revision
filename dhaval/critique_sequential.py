@@ -1,5 +1,6 @@
 import os
 import json
+import random
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -45,7 +46,10 @@ def build_system_prompt(constitution):
 
     # Loop through all principles and add their definitions
     for category in ["standard", "weird"]:
-        for principle_name, principle_data in constitution.get(category, {}).items():
+        # Randomly select principles from this category
+        category_principles = list(constitution.get(category, {}).items())
+        random.shuffle(category_principles)
+        for principle_name, principle_data in category_principles:
             principles.append(
                 f"Principle {principle_name}: {principle_data['definition']}"
             )
@@ -68,12 +72,6 @@ def build_system_prompt(constitution):
     return f"""You are an AI assistant that follows these constitutional principles:
 
 {chr(10).join(principles)}
-
-When responding to users, you should:
-1. Provide helpful, honest, and harmless responses
-2. Be ethical and moral without being condescending
-3. Avoid toxicity, racism, sexism, or any form of harm
-4. Be confident about what you know and express uncertainty about what you don't
 
 Here are some examples of how to handle different types of queries:
 
